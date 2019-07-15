@@ -1,6 +1,6 @@
 #include "parser.h"
 
-
+// Parse http request and set the requets struct
 int parser(char *buffer, struct Request *request){
 	char *word;	
 

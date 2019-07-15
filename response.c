@@ -1,19 +1,23 @@
 #include "response.h"
 
+
+// Send respnse based on request struct
 void sendResponse(int client_fd, int code, struct Request *request){
 	char template[] = "HTTP/1.0 200 OK\r\n"
 					  "Connection: close\r\n"
-					  "Content-Type: text/html\r\n"
+					  "Content-Type: %s\r\n"
 					  "Content-Length: %ld\r\n\r\n";	
 
 	char buffer[2000];
+	char MIME[50];
 	struct stat st;	
 
-	printf("Type: %s, Path: %s\n", request->type, request->filepath);
+	getMIMETag(request->filepath, MIME);
+	printf("Type: %s, Path: %s\n MIME: %s", request->type, request->filepath, MIME);
 	
 	if(checkFile(request->filepath) != -1){
 		stat(request->filepath, &st);
-		sprintf(buffer, template, st.st_size);
+		sprintf(buffer, template, MIME, st.st_size);
 		send(client_fd, buffer, strlen(buffer), 0);
 		sendFile(client_fd, request->filepath);
 	}else{
@@ -22,7 +26,7 @@ void sendResponse(int client_fd, int code, struct Request *request){
 }
 
 
-
+// Send error code
 void sendCode(int client_fd, int code){
 	char template[] = "HTTP/1.0 %s\r\n"
 					  "Connection: close\r\n"
@@ -53,7 +57,7 @@ void sendCode(int client_fd, int code){
 }
 
 
-
+// Send file to the socket fd
 void sendFile(int client_fd, char *filepath){
 	struct stat st;
 	int file_fd;
@@ -70,6 +74,7 @@ void sendFile(int client_fd, char *filepath){
 }
 
 
+// Check if file exists
 int checkFile(char *filename){
 	int file_fd;
 	file_fd = open(filename, O_RDONLY);
@@ -80,3 +85,23 @@ int checkFile(char *filename){
 		return 0;
 	}
 }
+
+
+// Return MIME tag based on file extention
+void getMIMETag(char *filepath, char *buffer){
+	char *word;
+	char filename[25];
+	
+	strcpy(filename, filepath);
+	word = strtok(filename, ".");
+	word = strtok(NULL, ".");	
+	
+	if(strcmp(word, "html") == 0){
+		strcpy(buffer, "text/html\0");
+	}else if(strcmp(word, "css") == 0){
+		strcpy(buffer, "text/css\0";)
+	}
+}
+
+
+

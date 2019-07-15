@@ -18,5 +18,6 @@ void sendResponse(int client_fd, int code, struct Request *request);
 void sendCode(int client_fd, int code);
 void sendFile(int client_fd, char *filepath);
 int checkFile(char *filename);
+void getMIMETag(char *filename, char *buffer);
 
 #endif

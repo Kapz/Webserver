@@ -15,7 +15,7 @@
 #include "parser.h"
 #include "response.h"
 
-#define PORT 8093
+#define PORT 8088
 #define BACKLOG 10
 
 void handleRequest(int client_fd, char *buffer, size_t size);
