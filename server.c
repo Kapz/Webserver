@@ -15,15 +15,10 @@
 #include "parser.h"
 #include "response.h"
 
-#define PORT 8088
+#define PORT 8087
 #define BACKLOG 10
 
 void handleRequest(int client_fd, char *buffer, size_t size);
-
-char response[] = "HTTP/1.1 200 OK\r\n"
-				  "Connection: close\r\n"
-				  "Content-Type: text/html\r\n"
-				  "Content-Length: %ld\r\n\r\n";
 
 
 int main(int argc, char *argv[]){
@@ -92,8 +87,9 @@ int main(int argc, char *argv[]){
 
 void handleRequest(int client_fd, char *buffer, size_t size){
 	struct Request request;
-	parser(buffer, &request);	
-	sendResponse(client_fd, 200, &request);
+	parser(&request, buffer, strlen(buffer));
+	printf("Resource: %s\n", request.resource);	
+	sendResponse(client_fd, &request);
 }
 
 
