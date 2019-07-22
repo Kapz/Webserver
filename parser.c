@@ -28,7 +28,8 @@ void parser(struct Request *request, char *requestdata, size_t size){
 	
 	// Get requested resource
 	field = strtok_r(NULL, " ", &save_field);
-	strcpy(request->resource, field+1);
+	strcpy(request->resource, "htdocs/");
+	strcat(request->resource, field+1);
 
 	
 	// Parse rest of the request fields
