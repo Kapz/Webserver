@@ -15,6 +15,13 @@ void sendResponse(int client_fd, struct Request *request){
 	time_t now = time(0);
 	struct tm tm = *gmtime(&now);	
 	int filesize;	
+		
+	// POST is not implemented yet
+	if(request->method == POST){
+		sendCode(client_fd, 501);
+		return;
+	}
+	
 			
 	if(checkFile(request->resource) != -1){
 		getMIMEtag(request->resource, MIME_tag);

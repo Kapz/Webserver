@@ -30,6 +30,15 @@ void parser(struct Request *request, char *requestdata, size_t size){
 	field = strtok_r(NULL, " ", &save_field);
 	strcpy(request->resource, "htdocs/");
 	strcat(request->resource, field+1);
+	
+	// If uri ends with / it should point to index.html
+	char lastchar[2];
+	lastchar[0] = request->resource[strlen(request->resource) - 1];
+	lastchar[1] = '\0';
+	
+	if(strcmp(lastchar, "/") == 0){
+		strcat(request->resource, "index.html");
+	}
 
 	
 	// Parse rest of the request fields

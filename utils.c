@@ -6,7 +6,9 @@ struct MIME_tag MIME_tags[] = {{"html", "text/html"},
 							   {"jpg", "image/jpeg"}, 
 							   {"jpeg", "image/jpeg"},
 	 						   {"js", "text/javascript"},
-							   {"png", "image/png"}};
+							   {"png", "image/png"},
+							   {"json", "application/json"},
+							   {"gif", "image/gif"}};
 
 
 

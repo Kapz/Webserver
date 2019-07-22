@@ -12,7 +12,7 @@
 #include <time.h>
 
 #include "utils.h"
-#include "parser.h" // For Request struct
+#include "parser.h" // For Request struct and method enum
 
 struct StatusCode{
 	int code;
