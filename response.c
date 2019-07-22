@@ -1,5 +1,11 @@
 #include "response.h"
 
+struct StatusCode status_codes[] = {{404, "404 Not Found", "<a>File not found on server</a>"},
+							      {400, "400 Bad Request", "<a>Bad request -  request was invalid</a>"},
+								  {500, "500 Internal Server Error", "<a>Internal server error</a>"},
+								  {501, "501 Not Implemented", "<a>Request type not implemented</a>"}};
+
+
 
 // Send response based on Request struct
 void sendResponse(int client_fd, struct Request *request){
@@ -50,40 +56,29 @@ void sendFile(int client_fd, char *file){
 
 // Send reponse code
 void sendCode(int client_fd, int code){
-	char response[2000];
+	char responseheaders[2000];
 	char date[1000];
 	time_t now = time(0);
 	struct tm tm = *gmtime(&now);
 
-	if(code == 404){
-		char resp[] = "<h1>File not found on server</h1>";
+	
+	for(int i = 0; i < sizeof(status_codes); i++){
+		if(code == status_codes[i].code){
+			sprintf(responseheaders, "HTTP/1.0 %s\r\n", status_codes[i].text);
+			send(client_fd, responseheaders, strlen(responseheaders), 0);
+			strftime(date, sizeof(date), "%a, %d %b %Y %H:%M:%S %Z", &tm);
+			send(client_fd, responseheaders, strlen(responseheaders), 0);
+			sprintf(responseheaders, "Date: %s\r\n", date);
+			send(client_fd, responseheaders, strlen(responseheaders), 0);
+			sprintf(responseheaders, "Content-Length: %d\r\n", strlen(status_codes[i].html));
+			send(client_fd, responseheaders, strlen(responseheaders), 0);
+			sprintf(responseheaders, "Content-Type: text/html\r\n");
+			send(client_fd, responseheaders, strlen(responseheaders), 0);
+			sprintf(responseheaders, "Connection: close\r\n\r\n");
+			send(client_fd, responseheaders, strlen(responseheaders), 0);
 			
-		sprintf(response, "HTTP/1.0 404 Not Found\r\n");
-		send(client_fd, response, strlen(response), 0);
-		strftime(date, sizeof(date), "%a, %d %b %Y %H:%M:%S %Z", &tm);
-		send(client_fd, response, strlen(response), 0);
-		sprintf(response, "Date: %s\r\n", date);
-		send(client_fd, response, strlen(response), 0);
-
-		if(checkFile("404.html") == -1){
-			sprintf(response, "Content-Length: %d\r\n", strlen(resp));
-			send(client_fd, response, strlen(response), 0);
-			sprintf(response, "Content-Type: text/html\r\n");
-			send(client_fd, response, strlen(response), 0);
-			sprintf(response, "Connection: close\r\n\r\n");
-			send(client_fd, response, strlen(response), 0);
-			sprintf(response, resp);
-			send(client_fd, response, strlen(response), 0);
-		}else{
-			sprintf(response, "Content-Length: %d\r\n", getFileSize("404.html"));
-			send(client_fd, response, strlen(response), 0);
-			sprintf(response, "Content-Type: text/html\r\n");
-			send(client_fd, response, strlen(response), 0);
-			sprintf(response, "Connection: close\r\n\r\n");
-			send(client_fd, response, strlen(response), 0);
-			sprintf(response, resp);
-			send(client_fd, response, strlen(response), 0);
-			sendFile(client_fd, "404.html");
+			send(client_fd, status_codes[i].html, strlen(status_codes[i].html), 0);	
+			
 		}
-	}// Add rest of codes
+	}
 }

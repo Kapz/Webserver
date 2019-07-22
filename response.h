@@ -14,6 +14,13 @@
 #include "utils.h"
 #include "parser.h" // For Request struct
 
+struct StatusCode{
+	int code;
+	char *text;
+	char *html;
+
+};
+
 void sendResponse(int client_fd, struct Request *request);
 void sendFile(int client_fd, char *file);
 void sendCode(int client_fd, int code);
