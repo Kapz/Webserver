@@ -15,7 +15,7 @@
 #include "parser.h"
 #include "response.h"
 
-#define PORT 8082
+#define PORT 8080
 #define BACKLOG 10
 
 void handleRequest(int client_fd, char *buffer, size_t size);
@@ -64,10 +64,9 @@ int main(int argc, char *argv[]){
 		}
 
 		if(!fork()){
-			close(server_fd);
+			printf("Request from: %s\n", inet_ntoa(client_addr.sin_addr));
 			memset(buffer, 0, 2047);
 			recv(client_fd, buffer, 2047, 0);
-			//printf("%s", buffer);
 
 			handleRequest(client_fd, buffer, sizeof(buffer));
 
@@ -87,8 +86,7 @@ int main(int argc, char *argv[]){
 
 void handleRequest(int client_fd, char *buffer, size_t size){
 	struct Request request;
-	parser(&request, buffer, strlen(buffer));
-	printf("Resource: %s\n", request.resource);	
+	parser(&request, buffer, strlen(buffer));	
 	sendResponse(client_fd, &request);
 }
 
